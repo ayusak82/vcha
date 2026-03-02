@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vcha.jp - VRChat Infrastructure Services</title>
+<meta name="description" content="VRChatコミュニティ向けインフラストラクチャサービス。ストリーミング・画像共有など。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #0084ff;
+    --accent3: #00ff9d;
+    --warn: #ffa500;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Noto Sans JP', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 0.1em; text-decoration: none; }
+  .logo span { color: var(--text3); }
+  .header-badge {
+    font-family: var(--mono); font-size: 0.6rem; color: var(--text3);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative; z-index: 1;
+    padding: 7rem 2rem 5rem;
+    max-width: 1000px; margin: 0 auto; width: 100%;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.65rem; color: var(--accent3);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    border: 1px solid rgba(0,255,157,0.3); padding: 0.3rem 0.8rem;
+    margin-bottom: 2rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent3); animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700; line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  h1 .dim { color: var(--text3); font-weight: 400; }
+  h1 .accent { color: var(--accent); }
+
+  .hero-desc {
+    font-size: 1rem; color: var(--text2);
+    max-width: 520px; margin-bottom: 3rem;
+    line-height: 1.9;
+  }
+
+  .hero-stats {
+    display: flex; gap: 2.5rem; flex-wrap: wrap;
+  }
+  .stat { }
+  .stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .stat-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.3rem; }
+
+  /* ── Services ── */
+  main { position: relative; z-index: 1; flex: 1; max-width: 1000px; margin: 0 auto; padding: 0 2rem 6rem; width: 100%; }
+
+  .section-label {
+    font-family: var(--mono); font-size: 0.65rem; color: var(--accent);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 5rem;
+  }
+
+  .service-card {
+    background: var(--bg2);
+    padding: 2rem;
+    text-decoration: none;
+    display: flex; flex-direction: column;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .service-card:hover { background: var(--bg3); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-card.live::before { background: var(--accent2); }
+  .service-card.image::before { background: var(--accent3); }
+  .service-card.soon::before { background: var(--text3); }
+
+  .service-tag {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid;
+    display: inline-block; margin-bottom: 1.2rem;
+    width: fit-content;
+  }
+  .service-card.live .service-tag { color: var(--accent2); border-color: rgba(0,132,255,0.4); }
+  .service-card.image .service-tag { color: var(--accent3); border-color: rgba(0,255,157,0.4); }
+  .service-card.soon .service-tag { color: var(--text3); border-color: rgba(100,116,139,0.4); }
+
+  .service-domain {
+    font-family: var(--mono); font-size: 1rem; font-weight: 700;
+    color: var(--text); margin-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+  }
+  .service-card.live .service-domain { color: var(--accent2); }
+  .service-card.image .service-domain { color: var(--accent3); }
+  .service-card.soon .service-domain { color: var(--text3); }
+
+  .service-name {
+    font-size: 0.85rem; font-weight: 500; color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .service-desc {
+    font-size: 0.82rem; color: var(--text2);
+    line-height: 1.7; flex: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-specs {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+  .spec-tag {
+    font-family: var(--mono); font-size: 0.6rem;
+    color: var(--text3); background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem; letter-spacing: 0.05em;
+  }
+
+  .service-arrow {
+    font-family: var(--mono); font-size: 0.7rem;
+    color: var(--text3); letter-spacing: 0.1em;
+    display: flex; align-items: center; gap: 0.5rem;
+    transition: color 0.2s, gap 0.2s;
+  }
+  .service-card:hover .service-arrow { color: var(--accent); gap: 0.8rem; }
+  .service-card.soon .service-arrow,
+  .service-card.soon:hover .service-arrow { color: var(--text3); gap: 0.5rem; cursor: default; }
+
+  /* ── About ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 5rem;
+  }
+  .about-cell {
+    background: var(--bg2); padding: 1.75rem 2rem;
+  }
+  .about-cell.full { grid-column: 1 / -1; }
+  .about-heading {
+    font-family: var(--mono); font-size: 0.65rem; color: var(--accent);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .about-text { font-size: 0.85rem; color: var(--text2); line-height: 1.8; }
+  .about-text a { color: var(--accent); text-decoration: none; }
+  .about-text a:hover { text-decoration: underline; }
+
+  .policy-list { list-style: none; }
+  .policy-list li {
+    padding: 0.3rem 0 0.3rem 1.2rem;
+    font-size: 0.82rem; color: var(--text2);
+    position: relative;
+  }
+  .policy-list li::before {
+    content: '▸'; position: absolute; left: 0;
+    color: var(--accent); font-size: 0.65rem;
+    top: 0.55rem;
+  }
+
+  /* ── Info table ── */
+  .info-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .info-table tr { border-bottom: 1px solid var(--border); }
+  .info-table td { padding: 0.6rem 0; color: var(--text2); vertical-align: top; }
+  .info-table td:first-child { font-family: var(--mono); font-size: 0.65rem; color: var(--text3); width: 40%; white-space: nowrap; padding-right: 1rem; }
+  .info-table code { font-family: var(--mono); font-size: 0.75rem; color: var(--accent3); }
+
+  /* ── Footer ── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    font-family: var(--mono); font-size: 0.65rem;
+    color: var(--text3); letter-spacing: 0.08em;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── Animations ── */
+  .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 5rem 1.5rem 3rem; }
+    main { padding: 0 1.5rem 4rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+    h1 { font-size: 2.5rem; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">vcha<span>.jp</span></a>
+  <span class="header-badge">VRChat Infrastructure</span>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">OPERATIONAL</div>
+  <h1>
+    <span class="dim">// </span><span class="accent">vcha</span><span class="dim">.jp</span><br>
+    Infrastructure<br>
+    <span class="dim">for VRChat</span>
+  </h1>
+  <p class="hero-desc">
+    VRChatコミュニティ向けに提供する無料インフラストラクチャサービス群です。<br>
+    登録不要・認証なし・完全オープンで利用できます。
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Active Services</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Free</div>
+      <div class="stat-label">All Services</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Operation</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- Services -->
+  <div class="section-label fade-up">Services</div>
+  <div class="services-grid fade-up">
+
+    <!-- live.vcha.jp -->
+    <a class="service-card live" href="https://live.vcha.jp" target="_blank">
+      <span class="service-tag">LIVE</span>
+      <div class="service-domain">live.vcha.jp</div>
+      <div class="service-name">RTMP Streaming</div>
+      <div class="service-desc">
+        OBSなどの配信ソフトからRTMPで映像を送信し、RTSP形式でVRChat・VLCなどに届けるストリーミング中継サービスです。
+      </div>
+      <div class="service-specs">
+        <span class="spec-tag">RTMP :1935</span>
+        <span class="spec-tag">RTSP :554</span>
+        <span class="spec-tag">5Mbps制限</span>
+        <span class="spec-tag">認証なし</span>
+        <span class="spec-tag">無制限視聴</span>
+      </div>
+      <div class="service-arrow">マニュアルを見る →</div>
+    </a>
+
+    <!-- image.vcha.jp -->
+    <a class="service-card image" href="https://image.vcha.jp" target="_blank">
+      <span class="service-tag">STORAGE</span>
+      <div class="service-domain">image.vcha.jp</div>
+      <div class="service-name">Image Sharing</div>
+      <div class="service-desc">
+        画像をアップロードしてURLで共有できるシンプルな画像共有サービスです。有効期限を設定して一時的な共有にも対応します。
+      </div>
+      <div class="service-specs">
+        <span class="spec-tag">最大20MB</span>
+        <span class="spec-tag">JPEG/PNG/GIF/WebP</span>
+        <span class="spec-tag">1日〜永久</span>
+        <span class="spec-tag">登録不要</span>
+      </div>
+      <div class="service-arrow">サービスを使う →</div>
+    </a>
+
+    <!-- Coming soon slot 1 -->
+    <div class="service-card soon">
+      <span class="service-tag">COMING SOON</span>
+      <div class="service-domain">?.vcha.jp</div>
+      <div class="service-name">次期サービス</div>
+      <div class="service-desc">
+        新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。
+      </div>
+      <div class="service-specs">
+        <span class="spec-tag">TBD</span>
+      </div>
+      <div class="service-arrow">準備中</div>
+    </div>
+
+    <!-- Coming soon slot 2 -->
+    <div class="service-card soon">
+      <span class="service-tag">COMING SOON</span>
+      <div class="service-domain">?.vcha.jp</div>
+      <div class="service-name">次期サービス</div>
+      <div class="service-desc">
+        新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。
+      </div>
+      <div class="service-specs">
+        <span class="spec-tag">TBD</span>
+      </div>
+      <div class="service-arrow">準備中</div>
+    </div>
+
+  </div>
+
+  <!-- About -->
+  <div class="section-label fade-up">About</div>
+  <div class="about-grid fade-up">
+
+    <div class="about-cell">
+      <div class="about-heading">このサービスについて</div>
+      <p class="about-text">
+        vcha.jpはVRChatコミュニティの活動を技術的にサポートするため、個人で運営しているインフラストラクチャサービス群です。ライブ配信・ファイル共有など、VRChatでの体験をより豊かにするツールを無料で提供しています。
+      </p>
+    </div>
+
+    <div class="about-cell">
+      <div class="about-heading">運営者情報</div>
+      <table class="info-table">
+        <tr><td>運営</td><td><a href="https://nccgr.jp" style="color:var(--accent);text-decoration:none;">NCCGr</a></td></tr>
+        <tr><td>登録番号</td><td><code>H-05-01926</code></td></tr>
+        <tr><td>区分</td><td>電気通信事業者（届出）</td></tr>
+        <tr><td>サーバー</td><td>日本国内 VPS</td></tr>
+      </table>
+    </div>
+
+    <div class="about-cell">
+      <div class="about-heading">利用上の注意</div>
+      <ul class="policy-list">
+        <li>個人運営のため、予告なくサービスを停止・変更する場合があります</li>
+        <li>サービスの継続性は保証されません。重要なデータは必ず手元に保管してください</li>
+        <li>商用利用・大規模利用はご遠慮ください</li>
+        <li>障害・メンテナンス情報は随時このページで告知します</li>
+      </ul>
+    </div>
+
+    <div class="about-cell">
+      <div class="about-heading">禁止事項</div>
+      <ul class="policy-list">
+        <li>著作権を侵害するコンテンツの配信・共有</li>
+        <li>他者への誹謗中傷・ハラスメントを含むコンテンツ</li>
+        <li>わいせつ・暴力的なコンテンツ</li>
+        <li>サービスへの意図的な高負荷・攻撃行為</li>
+        <li>その他、法令または公序良俗に反する利用</li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <span>© vcha.jp &nbsp;|&nbsp; Provided by <a href="https://nccgr.jp">NCCGr</a> (H-05-01926)</span>
+  <span>All services are free to use &nbsp;·&nbsp; No registration required</span>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
