@@ -17,6 +17,7 @@
     --accent2: #0084ff;
     --accent3: #00ff9d;
     --warn: #ffa500;
+    --danger: #ff4d4d;
     --text: #e2e8f0;
     --text2: #94a3b8;
     --text3: #64748b;
@@ -103,7 +104,7 @@
   .stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1; }
   .stat-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.3rem; }
 
-  /* ── Services ── */
+  /* ── Main ── */
   main { position: relative; z-index: 1; flex: 1; max-width: 1000px; margin: 0 auto; padding: 0 2rem 6rem; width: 100%; }
 
   .section-label {
@@ -114,6 +115,110 @@
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+  /* ── Metrics Panel ── */
+  .metrics-panel {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    margin-bottom: 5rem;
+  }
+  .metrics-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .metrics-title {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--text);
+    letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.7rem;
+  }
+  .metrics-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent3); animation: pulse 2s infinite;
+  }
+  .metrics-dot.error { background: var(--danger); animation: none; }
+  .metrics-dot.loading { background: var(--warn); }
+
+  .metrics-status {
+    font-family: var(--mono); font-size: 0.6rem; color: var(--text3);
+    letter-spacing: 0.08em;
+  }
+  .metrics-status .updated { color: var(--accent3); }
+  .metrics-status .err { color: var(--danger); }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .metric-block {
+    padding: 1.5rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-block:nth-child(4n) { border-right: none; }
+  .metric-block:nth-last-child(-n+4) { border-bottom: none; }
+
+  .metric-label {
+    font-family: var(--mono); font-size: 0.6rem; color: var(--text3);
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.7rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .metric-icon { font-size: 0.7rem; }
+
+  .metric-value {
+    font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+    line-height: 1; margin-bottom: 0.4rem;
+    color: var(--accent);
+    transition: color 0.3s;
+  }
+  .metric-value.warn { color: var(--warn); }
+  .metric-value.danger { color: var(--danger); }
+
+  .metric-sub {
+    font-family: var(--mono); font-size: 0.65rem; color: var(--text3);
+    margin-bottom: 0.9rem;
+  }
+
+  /* ゲージバー */
+  .gauge-track {
+    width: 100%; height: 3px; background: rgba(255,255,255,0.06);
+    border-radius: 2px; overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%; border-radius: 2px;
+    background: var(--accent);
+    transition: width 0.6s ease, background 0.3s;
+    width: 0%;
+  }
+  .gauge-fill.warn { background: var(--warn); }
+  .gauge-fill.danger { background: var(--danger); }
+
+  /* ネットワーク行 */
+  .net-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.35rem 0; font-family: var(--mono); font-size: 0.7rem;
+  }
+  .net-row-label { color: var(--text3); }
+  .net-row-val { color: var(--text); font-weight: 700; }
+  .net-row-val.accent { color: var(--accent); }
+
+  /* アップタイム */
+  .uptime-val {
+    font-family: var(--mono); font-size: 0.95rem; font-weight: 700; color: var(--accent3);
+  }
+
+  /* スケルトン */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 2px;
+    height: 1.6rem; width: 70%;
+  }
+  @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+
+  /* ── Services ── */
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -141,7 +246,6 @@
   }
   .service-card:hover { background: var(--bg3); }
   .service-card:hover::before { transform: scaleX(1); }
-
   .service-card.live::before { background: var(--accent2); }
   .service-card.image::before { background: var(--accent3); }
   .service-card.soon::before { background: var(--text3); }
@@ -149,10 +253,8 @@
   .service-tag {
     font-family: var(--mono); font-size: 0.6rem;
     letter-spacing: 0.15em; text-transform: uppercase;
-    padding: 0.2rem 0.6rem;
-    border: 1px solid;
-    display: inline-block; margin-bottom: 1.2rem;
-    width: fit-content;
+    padding: 0.2rem 0.6rem; border: 1px solid;
+    display: inline-block; margin-bottom: 1.2rem; width: fit-content;
   }
   .service-card.live .service-tag { color: var(--accent2); border-color: rgba(0,132,255,0.4); }
   .service-card.image .service-tag { color: var(--accent3); border-color: rgba(0,255,157,0.4); }
@@ -160,38 +262,23 @@
 
   .service-domain {
     font-family: var(--mono); font-size: 1rem; font-weight: 700;
-    color: var(--text); margin-bottom: 0.6rem;
-    letter-spacing: 0.02em;
+    margin-bottom: 0.6rem; letter-spacing: 0.02em;
   }
   .service-card.live .service-domain { color: var(--accent2); }
   .service-card.image .service-domain { color: var(--accent3); }
   .service-card.soon .service-domain { color: var(--text3); }
 
-  .service-name {
-    font-size: 0.85rem; font-weight: 500; color: var(--text);
-    margin-bottom: 0.75rem;
-  }
-  .service-desc {
-    font-size: 0.82rem; color: var(--text2);
-    line-height: 1.7; flex: 1;
-    margin-bottom: 1.5rem;
-  }
-
-  .service-specs {
-    display: flex; flex-wrap: wrap; gap: 0.4rem;
-    margin-bottom: 1.5rem;
-  }
+  .service-name { font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 0.75rem; }
+  .service-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.7; flex: 1; margin-bottom: 1.5rem; }
+  .service-specs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
   .spec-tag {
     font-family: var(--mono); font-size: 0.6rem;
     color: var(--text3); background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    padding: 0.2rem 0.5rem; letter-spacing: 0.05em;
+    border: 1px solid var(--border); padding: 0.2rem 0.5rem; letter-spacing: 0.05em;
   }
-
   .service-arrow {
-    font-family: var(--mono); font-size: 0.7rem;
-    color: var(--text3); letter-spacing: 0.1em;
-    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.7rem; color: var(--text3);
+    letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem;
     transition: color 0.2s, gap 0.2s;
   }
   .service-card:hover .service-arrow { color: var(--accent); gap: 0.8rem; }
@@ -200,39 +287,23 @@
 
   /* ── About ── */
   .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
     margin-bottom: 5rem;
   }
-  .about-cell {
-    background: var(--bg2); padding: 1.75rem 2rem;
-  }
+  .about-cell { background: var(--bg2); padding: 1.75rem 2rem; }
   .about-cell.full { grid-column: 1 / -1; }
   .about-heading {
     font-family: var(--mono); font-size: 0.65rem; color: var(--accent);
-    letter-spacing: 0.15em; text-transform: uppercase;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem;
   }
   .about-text { font-size: 0.85rem; color: var(--text2); line-height: 1.8; }
   .about-text a { color: var(--accent); text-decoration: none; }
   .about-text a:hover { text-decoration: underline; }
-
   .policy-list { list-style: none; }
-  .policy-list li {
-    padding: 0.3rem 0 0.3rem 1.2rem;
-    font-size: 0.82rem; color: var(--text2);
-    position: relative;
-  }
-  .policy-list li::before {
-    content: '▸'; position: absolute; left: 0;
-    color: var(--accent); font-size: 0.65rem;
-    top: 0.55rem;
-  }
+  .policy-list li { padding: 0.3rem 0 0.3rem 1.2rem; font-size: 0.82rem; color: var(--text2); position: relative; }
+  .policy-list li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-size: 0.65rem; top: 0.55rem; }
 
-  /* ── Info table ── */
   .info-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
   .info-table tr { border-bottom: 1px solid var(--border); }
   .info-table td { padding: 0.6rem 0; color: var(--text2); vertical-align: top; }
@@ -242,10 +313,8 @@
   /* ── Footer ── */
   footer {
     position: relative; z-index: 1;
-    border-top: 1px solid var(--border);
-    padding: 2rem;
-    font-family: var(--mono); font-size: 0.65rem;
-    color: var(--text3); letter-spacing: 0.08em;
+    border-top: 1px solid var(--border); padding: 2rem;
+    font-family: var(--mono); font-size: 0.65rem; color: var(--text3); letter-spacing: 0.08em;
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 1rem;
   }
@@ -255,6 +324,13 @@
   .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
   .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+  @media (max-width: 768px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .metric-block:nth-child(2n) { border-right: none; }
+    .metric-block:nth-child(4n) { border-right: none; }
+    .metric-block:nth-last-child(-n+4) { border-bottom: 1px solid var(--border); }
+    .metric-block:nth-last-child(-n+2) { border-bottom: none; }
+  }
   @media (max-width: 640px) {
     .hero { padding: 5rem 1.5rem 3rem; }
     main { padding: 0 1.5rem 4rem; }
@@ -262,6 +338,12 @@
     .hero-stats { gap: 1.5rem; }
     h1 { font-size: 2.5rem; }
     footer { flex-direction: column; text-align: center; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 400px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+    .metric-block { border-right: none !important; border-bottom: 1px solid var(--border) !important; }
+    .metric-block:last-child { border-bottom: none !important; }
   }
 </style>
 </head>
@@ -301,11 +383,89 @@
 
 <main>
 
+  <!-- Server Status -->
+  <div class="section-label fade-up">Server Status</div>
+  <div class="metrics-panel fade-up">
+    <div class="metrics-header">
+      <div class="metrics-title">
+        <div class="metrics-dot loading" id="metrics-dot"></div>
+        <span>vcha.jp — Live Metrics</span>
+      </div>
+      <div class="metrics-status" id="metrics-status">接続中...</div>
+    </div>
+    <div class="metrics-grid">
+
+      <!-- CPU -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">⬡</span> CPU Usage</div>
+        <div class="metric-value" id="cpu-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="cpu-sub">&nbsp;</div>
+        <div class="gauge-track"><div class="gauge-fill" id="cpu-gauge"></div></div>
+      </div>
+
+      <!-- Memory -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">▦</span> Memory</div>
+        <div class="metric-value" id="mem-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="mem-sub">&nbsp;</div>
+        <div class="gauge-track"><div class="gauge-fill" id="mem-gauge"></div></div>
+      </div>
+
+      <!-- Disk -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">◫</span> Disk Usage</div>
+        <div class="metric-value" id="disk-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="disk-sub">&nbsp;</div>
+        <div class="gauge-track"><div class="gauge-fill" id="disk-gauge"></div></div>
+      </div>
+
+      <!-- Uptime -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">◌</span> Uptime</div>
+        <div class="metric-value" style="font-size:1rem; padding-top:0.2rem;" id="uptime-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="uptime-sub">&nbsp;</div>
+        <div class="gauge-track" style="margin-top:0.35rem;"><div class="gauge-fill" style="width:100%; background:var(--accent3);"></div></div>
+      </div>
+
+      <!-- Network TX -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">↑</span> Upload (現在)</div>
+        <div class="metric-value" id="tx-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="tx-total">&nbsp;</div>
+        <div class="gauge-track"><div class="gauge-fill" id="tx-gauge" style="background:var(--accent2);"></div></div>
+      </div>
+
+      <!-- Network RX -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">↓</span> Download (現在)</div>
+        <div class="metric-value" id="rx-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="rx-total">&nbsp;</div>
+        <div class="gauge-track"><div class="gauge-fill" id="rx-gauge" style="background:var(--accent3);"></div></div>
+      </div>
+
+      <!-- Net Total TX -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">⇅</span> 総送信量</div>
+        <div class="metric-value" style="font-size:1.1rem; padding-top:0.15rem;" id="sent-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="sent-sub">&nbsp;</div>
+        <div class="gauge-track" style="margin-top:0.5rem;"><div class="gauge-fill" style="width:100%; background:rgba(0,132,255,0.5);"></div></div>
+      </div>
+
+      <!-- Net Total RX -->
+      <div class="metric-block">
+        <div class="metric-label"><span class="metric-icon">⇅</span> 総受信量</div>
+        <div class="metric-value" style="font-size:1.1rem; padding-top:0.15rem;" id="recv-val"><div class="skeleton"></div></div>
+        <div class="metric-sub" id="recv-sub">&nbsp;</div>
+        <div class="gauge-track" style="margin-top:0.5rem;"><div class="gauge-fill" style="width:100%; background:rgba(0,255,157,0.5);"></div></div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Services -->
   <div class="section-label fade-up">Services</div>
   <div class="services-grid fade-up">
 
-    <!-- live.vcha.jp -->
     <a class="service-card live" href="https://manual.vcha.jp" target="_blank">
       <span class="service-tag">LIVE</span>
       <div class="service-domain">live.vcha.jp</div>
@@ -323,7 +483,6 @@
       <div class="service-arrow">マニュアルを見る →</div>
     </a>
 
-    <!-- image.vcha.jp -->
     <a class="service-card image" href="https://image.vcha.jp" target="_blank">
       <span class="service-tag">STORAGE</span>
       <div class="service-domain">image.vcha.jp</div>
@@ -340,31 +499,21 @@
       <div class="service-arrow">サービスを使う →</div>
     </a>
 
-    <!-- Coming soon slot 1 -->
     <div class="service-card soon">
       <span class="service-tag">COMING SOON</span>
       <div class="service-domain">?.vcha.jp</div>
       <div class="service-name">次期サービス</div>
-      <div class="service-desc">
-        新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。
-      </div>
-      <div class="service-specs">
-        <span class="spec-tag">TBD</span>
-      </div>
+      <div class="service-desc">新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。</div>
+      <div class="service-specs"><span class="spec-tag">TBD</span></div>
       <div class="service-arrow">準備中</div>
     </div>
 
-    <!-- Coming soon slot 2 -->
     <div class="service-card soon">
       <span class="service-tag">COMING SOON</span>
       <div class="service-domain">?.vcha.jp</div>
       <div class="service-name">次期サービス</div>
-      <div class="service-desc">
-        新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。
-      </div>
-      <div class="service-specs">
-        <span class="spec-tag">TBD</span>
-      </div>
+      <div class="service-desc">新しいサービスを準備中です。VRChatコミュニティに役立つ機能を随時追加していく予定です。</div>
+      <div class="service-specs"><span class="spec-tag">TBD</span></div>
       <div class="service-arrow">準備中</div>
     </div>
 
@@ -422,6 +571,138 @@
 </footer>
 
 <script>
+  // =============================================
+  // 設定 — デプロイ後にここを変更してください
+  // =============================================
+  const METRICS_URL = 'https://api.vcha.jp/metrics';
+  const API_KEY     = 'YOUR_API_KEY_HERE';  // .envのAPI_KEYと一致させる
+  const INTERVAL_MS = 5000;  // 更新間隔（ミリ秒）
+  // =============================================
+
+  const fmt = {
+    pct:    v => `${v.toFixed(1)}%`,
+    bytes:  v => {
+      if (v >= 1e12) return `${(v/1e12).toFixed(2)} TB`;
+      if (v >= 1e9)  return `${(v/1e9).toFixed(2)} GB`;
+      if (v >= 1e6)  return `${(v/1e6).toFixed(1)} MB`;
+      return `${(v/1e3).toFixed(0)} KB`;
+    },
+    bps:    v => {
+      if (v >= 1e9)  return `${(v/1e9).toFixed(2)} Gbps`;
+      if (v >= 1e6)  return `${(v/1e6).toFixed(1)} Mbps`;
+      if (v >= 1e3)  return `${(v/1e3).toFixed(0)} Kbps`;
+      return `${v} bps`;
+    },
+    uptime: s => {
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      if (d > 0) return `${d}d ${h}h ${m}m`;
+      if (h > 0) return `${h}h ${m}m`;
+      return `${m}m ${s % 60}s`;
+    }
+  };
+
+  function colorClass(pct) {
+    if (pct >= 90) return 'danger';
+    if (pct >= 70) return 'warn';
+    return '';
+  }
+
+  function setGauge(id, pct) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const cls = colorClass(pct);
+    el.style.width = `${Math.min(100, pct)}%`;
+    el.className = 'gauge-fill' + (cls ? ' ' + cls : '');
+  }
+
+  function setVal(id, html, cls = '') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = html;
+    el.className = 'metric-value' + (cls ? ' ' + cls : '');
+  }
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function setStatus(msg, type = '') {
+    const el = document.getElementById('metrics-status');
+    const dot = document.getElementById('metrics-dot');
+    if (!el || !dot) return;
+    el.innerHTML = `<span class="${type}">${msg}</span>`;
+    dot.className = 'metrics-dot' + (type ? ' ' + type : '');
+  }
+
+  async function fetchMetrics() {
+    try {
+      const res = await fetch(METRICS_URL, {
+        headers: { 'X-API-Key': API_KEY },
+        signal: AbortSignal.timeout(4000)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const d = await res.json();
+
+      // CPU
+      const cpuCls = colorClass(d.cpu.percent);
+      setVal('cpu-val', fmt.pct(d.cpu.percent), cpuCls);
+      setText('cpu-sub', `${d.cpu.count} cores`);
+      setGauge('cpu-gauge', d.cpu.percent);
+
+      // Memory
+      const memCls = colorClass(d.memory.percent);
+      setVal('mem-val', fmt.pct(d.memory.percent), memCls);
+      setText('mem-sub', `${fmt.bytes(d.memory.used)} / ${fmt.bytes(d.memory.total)}`);
+      setGauge('mem-gauge', d.memory.percent);
+
+      // Disk
+      const diskCls = colorClass(d.disk.percent);
+      setVal('disk-val', fmt.pct(d.disk.percent), diskCls);
+      setText('disk-sub', `${fmt.bytes(d.disk.used)} / ${fmt.bytes(d.disk.total)}`);
+      setGauge('disk-gauge', d.disk.percent);
+
+      // Uptime
+      document.getElementById('uptime-val').textContent = fmt.uptime(d.uptime);
+      setText('uptime-sub', `起動してから ${Math.floor(d.uptime/86400)} 日`);
+
+      // Network speed
+      const txBps = d.network.tx_bps * 8;
+      const rxBps = d.network.rx_bps * 8;
+      const maxBps = 1e9; // 1Gbps を最大としてゲージ計算
+      setVal('tx-val', fmt.bps(txBps));
+      setText('tx-total', `累計: ${fmt.bytes(d.network.bytes_sent)}`);
+      setGauge('tx-gauge', (txBps / maxBps) * 100);
+      document.getElementById('tx-gauge').style.background = 'var(--accent2)';
+
+      setVal('rx-val', fmt.bps(rxBps));
+      setText('rx-total', `累計: ${fmt.bytes(d.network.bytes_recv)}`);
+      setGauge('rx-gauge', (rxBps / maxBps) * 100);
+      document.getElementById('rx-gauge').style.background = 'var(--accent3)';
+
+      // Network totals
+      document.getElementById('sent-val').textContent = fmt.bytes(d.network.bytes_sent);
+      setText('sent-sub', '送信トータル（起動以降）');
+      document.getElementById('recv-val').textContent = fmt.bytes(d.network.bytes_recv);
+      setText('recv-sub', '受信トータル（起動以降）');
+
+      // Status
+      const now = new Date().toLocaleTimeString('ja-JP');
+      setStatus(`更新: ${now}`, 'updated');
+
+    } catch (err) {
+      setStatus(`取得失敗: ${err.message}`, 'err');
+    }
+  }
+
+  // 初回ロード
+  fetchMetrics();
+  // 定期更新
+  setInterval(fetchMetrics, INTERVAL_MS);
+
+  // フェードインアニメーション
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
